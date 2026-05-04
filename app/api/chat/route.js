@@ -53,7 +53,7 @@ export async function POST(request) {
 
     // 4. Stream the response from OpenRouter
     const result = streamText({
-      model: openrouter('openai/gpt-4o-mini'),
+      model: openrouter.chat('openai/gpt-4o-mini'),
       system: augmentedPrompt,
       messages: await convertToModelMessages(messages),
     });
