@@ -39,6 +39,7 @@ export default function FileUploader({ password, onUploadComplete }) {
     setProgress(10);
     setStatus(`Uploading ${file.name}...`);
 
+    let succeeded = false;
     try {
       setProgress(20);
       setStatus('Parsing document...');
@@ -58,22 +59,25 @@ export default function FileUploader({ password, onUploadComplete }) {
       setProgress(80);
 
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || 'Upload failed');
+        let errMsg = 'Upload failed';
+        try { errMsg = (await res.json()).error || errMsg; } catch {}
+        throw new Error(errMsg);
       }
 
       const data = await res.json();
       setProgress(100);
       setStatus(`✅ ${file.name} uploaded — ${data.document.chunkCount} chunks indexed`);
+      succeeded = true;
       onUploadComplete?.();
     } catch (error) {
       setStatus(`❌ ${error.message}`);
     } finally {
       setUploading(false);
-      setTimeout(() => {
+      if (succeeded) {
+        setTimeout(() => { setProgress(0); setStatus(''); }, 4000);
+      } else {
         setProgress(0);
-        setStatus('');
-      }, 4000);
+      }
     }
   };
 

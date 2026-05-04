@@ -14,8 +14,10 @@ const SUGGESTIONS = [
 
 export default function ChatInterface() {
   const [inputValue, setInputValue] = useState('');
-  const { messages, setInput, handleSubmit, isLoading, append } = useChat({
+  const [chatError, setChatError] = useState('');
+  const { messages, isLoading, append } = useChat({
     api: '/api/chat',
+    onError: (err) => setChatError(err.message || 'Something went wrong. Please try again.'),
   });
 
   const messagesEndRef = useRef(null);
@@ -81,6 +83,13 @@ export default function ChatInterface() {
         )}
         <div ref={messagesEndRef} />
       </div>
+
+      {chatError && (
+        <div className="chat-error">
+          <span>⚠️ {chatError}</span>
+          <button onClick={() => setChatError('')}>✕</button>
+        </div>
+      )}
 
       <div className="chat-input-area">
         <form className="chat-input-wrapper" onSubmit={onSubmit}>
