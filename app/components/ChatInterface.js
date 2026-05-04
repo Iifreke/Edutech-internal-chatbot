@@ -14,11 +14,10 @@ const SUGGESTIONS = [
 
 export default function ChatInterface() {
   const [inputValue, setInputValue] = useState('');
-  const [chatError, setChatError] = useState('');
-  const { messages, isLoading, append } = useChat({
+  const { messages, status, error, sendMessage, clearError } = useChat({
     api: '/api/chat',
-    onError: (err) => setChatError(err.message || 'Something went wrong. Please try again.'),
   });
+  const isLoading = status === 'submitted' || status === 'streaming';
 
   const messagesEndRef = useRef(null);
 
@@ -29,7 +28,7 @@ export default function ChatInterface() {
   const onSubmit = (e) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
-    append({ role: 'user', content: inputValue.trim() });
+    sendMessage({ text: inputValue.trim() });
     setInputValue('');
   };
 
@@ -41,7 +40,7 @@ export default function ChatInterface() {
   };
 
   const handleSuggestion = (text) => {
-    append({ role: 'user', content: text });
+    sendMessage({ text });
   };
 
   return (
@@ -84,10 +83,10 @@ export default function ChatInterface() {
         <div ref={messagesEndRef} />
       </div>
 
-      {chatError && (
+      {error && (
         <div className="chat-error">
-          <span>⚠️ {chatError}</span>
-          <button onClick={() => setChatError('')}>✕</button>
+          <span>⚠️ {error.message || 'Something went wrong. Please try again.'}</span>
+          <button onClick={() => clearError()}>✕</button>
         </div>
       )}
 
