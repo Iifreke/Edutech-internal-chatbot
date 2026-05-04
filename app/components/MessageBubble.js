@@ -28,12 +28,9 @@ export default function MessageBubble({ message }) {
         if (line.match(/^\d+\.\s/)) {
           return `<li>${line.replace(/^\d+\.\s/, '')}</li>`;
         }
-        // Headers
-        if (line.match(/^###\s/)) {
-          return `<strong>${line.replace(/^###\s/, '')}</strong>`;
-        }
-        if (line.match(/^##\s/)) {
-          return `<strong>${line.replace(/^##\s/, '')}</strong>`;
+        // Headers (####, ###, ##, #)
+        if (line.match(/^#{1,6}\s/)) {
+          return `<strong>${line.replace(/^#{1,6}\s/, '')}</strong>`;
         }
         if (line === '') return '<br/>';
         return `<p>${line}</p>`;
