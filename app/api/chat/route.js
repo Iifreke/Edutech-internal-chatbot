@@ -2,6 +2,7 @@ import { streamText, convertToModelMessages } from 'ai';
 import { openrouter, SYSTEM_PROMPT } from '@/lib/openrouter';
 import { generateEmbedding } from '@/lib/embeddings';
 import { searchChunks } from '@/lib/supabase';
+import { searchInternet } from '@/lib/tavily';
 
 export const maxDuration = 60;
 
@@ -25,6 +26,7 @@ export async function POST(request) {
 
     // 1. Generate embedding for the user's question
     let contextText = '';
+    let isFromInternet = false;
 
     try {
       const queryEmbedding = await generateEmbedding(userMessage);
@@ -41,20 +43,43 @@ export async function POST(request) {
         });
 
         contextText = chunkTexts.join('\n\n---\n\n');
+      } else {
+        // Fallback to Internet Search
+        console.log('No relevant documents found. Searching the internet...');
+        const searchResults = await searchInternet(userMessage);
+        
+        if (searchResults && searchResults.results && searchResults.results.length > 0) {
+          isFromInternet = true;
+          const webContext = searchResults.results.map(r => 
+            `[Web Source: ${r.title}] (${r.url})\n${r.content}`
+          ).join('\n\n---\n\n');
+          
+          contextText = `AI SUMMARY OF WEB RESULTS: ${searchResults.answer || 'N/A'}\n\nDETAILED WEB RESULTS:\n${webContext}`;
+        }
       }
     } catch (embeddingError) {
-      console.error('Embedding/search error:', embeddingError);
+      console.error('Search error:', embeddingError);
     }
 
     // 3. Build the augmented system prompt
-    const augmentedPrompt = contextText
-      ? `${SYSTEM_PROMPT}\n\n--- CONTEXT FROM COMPANY DOCUMENTS ---\n\n${contextText}\n\n--- END CONTEXT ---`
-      : `${SYSTEM_PROMPT}\n\nNote: No relevant documents were found in the knowledge base for this query. Let the user know you don't have information about their specific question yet.`;
+    let finalPrompt = SYSTEM_PROMPT;
+    
+    if (contextText) {
+      if (isFromInternet) {
+        finalPrompt += `\n\nIMPORTANT: No information was found in the Edutech Global internal knowledge base. You have performed an internet search instead. 
+        \n\n--- INTERNET SEARCH RESULTS ---\n\n${contextText}\n\n--- END SEARCH RESULTS ---
+        \n\nPlease start your response by saying: "I couldn't find information on this in our internal documents, so I've checked the internet for you." Then answer based on the search results.`;
+      } else {
+        finalPrompt += `\n\n--- CONTEXT FROM COMPANY DOCUMENTS ---\n\n${contextText}\n\n--- END CONTEXT ---`;
+      }
+    } else {
+      finalPrompt += `\n\nNote: No relevant documents were found in the knowledge base and no internet search results were available. Let the user know you don't have information about their specific question yet.`;
+    }
 
     // 4. Stream the response from OpenRouter
     const result = streamText({
       model: openrouter.chat('openai/gpt-4o-mini'),
-      system: augmentedPrompt,
+      system: finalPrompt,
       messages: await convertToModelMessages(messages),
     });
 
