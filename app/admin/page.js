@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import PasswordGate from '../components/PasswordGate';
 import FileUploader from '../components/FileUploader';
 import DocumentList from '../components/DocumentList';
+import WebSourceManager from '../components/WebSourceManager';
 
 export default function AdminPage() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -60,7 +61,19 @@ export default function AdminPage() {
           </div>
 
           <div className="admin-section">
-            <h2 className="admin-section-title">📚 Documents ({refreshKey >= 0 ? '' : ''})</h2>
+            <h2 className="admin-section-title">🌐 Web Sources</h2>
+            <p className="admin-desc" style={{ marginBottom: 12 }}>
+              Add websites to the knowledge base. The chatbot will search their content when answering questions.
+            </p>
+            <WebSourceManager
+              password={password}
+              refreshTrigger={refreshKey}
+              onRefresh={() => setRefreshKey((k) => k + 1)}
+            />
+          </div>
+
+          <div className="admin-section">
+            <h2 className="admin-section-title">📚 Uploaded Documents</h2>
             <DocumentList password={password} refreshTrigger={refreshKey} />
           </div>
         </div>

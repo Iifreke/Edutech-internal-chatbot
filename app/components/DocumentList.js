@@ -15,7 +15,7 @@ export default function DocumentList({ password, refreshTrigger }) {
       const res = await fetch('/api/documents');
       if (res.ok) {
         const data = await res.json();
-        setDocuments(data.documents || []);
+        setDocuments((data.documents || []).filter(d => d.file_type !== 'web'));
       }
     } catch (err) {
       console.error('Failed to fetch documents:', err);
