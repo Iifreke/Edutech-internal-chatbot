@@ -9,11 +9,8 @@ export default function Header() {
   return (
     <header className="header">
       <Link href="/" className="header-brand">
-        <div className="header-logo">E</div>
-        <div>
-          <div className="header-title">Edutech Global</div>
-          <div className="header-subtitle">AI Knowledge Assistant</div>
-        </div>
+        <img src="/edutech-logo-white.png" alt="EduTech Global" className="header-logo-img" />
+        <div className="header-subtitle">AI Knowledge Assistant</div>
       </Link>
       <nav className="header-nav">
         <Link href="/" className={`header-link ${pathname === '/' ? 'active' : ''}`}>
