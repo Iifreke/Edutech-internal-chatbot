@@ -24,59 +24,98 @@ export async function POST(request) {
       return Response.json({ error: 'Empty message' }, { status: 400 });
     }
 
-    // 1. Generate embedding for the user's question
+    // Scores above HIGH_CONFIDENCE mean the KB has a solid answer — no internet needed.
+    // Scores between WEAK_MATCH and HIGH_CONFIDENCE mean the KB found something partial
+    // — supplement with an internet search. Below WEAK_MATCH means no KB match at all.
+    const HIGH_CONFIDENCE = 0.6;
+    const WEAK_MATCH      = 0.3;
+
     let contextText = '';
-    let isFromInternet = false;
+    let sourceMode  = 'none'; // 'kb_only' | 'kb_and_web' | 'web_only' | 'none'
 
     try {
       const queryEmbedding = await generateEmbedding(userMessage);
+      const relevantChunks = await searchChunks(queryEmbedding, 8, WEAK_MATCH);
 
-      // 2. Search for relevant document chunks
-      const relevantChunks = await searchChunks(queryEmbedding, 8, 0.3);
+      const bestScore = relevantChunks?.length > 0
+        ? Math.max(...relevantChunks.map(c => c.similarity))
+        : 0;
 
-      if (relevantChunks && relevantChunks.length > 0) {
-        const uniqueSources = new Set();
-        const chunkTexts = relevantChunks.map((chunk) => {
-          const source = chunk.metadata?.source || 'Unknown document';
-          uniqueSources.add(source);
-          return `[Source: ${source}]\n${chunk.content}`;
-        });
+      const buildKbContext = (chunks) =>
+        chunks
+          .map(c => `[Source: ${c.metadata?.source || 'Unknown document'}]\n${c.content}`)
+          .join('\n\n---\n\n');
 
-        contextText = chunkTexts.join('\n\n---\n\n');
+      const buildWebContext = (sr) => {
+        if (!sr?.results?.length) return null;
+        const parts = sr.results
+          .map(r => `[Web Source: ${r.title}] (${r.url})\n${r.content}`)
+          .join('\n\n---\n\n');
+        return `AI SUMMARY: ${sr.answer || 'N/A'}\n\nDETAILED RESULTS:\n${parts}`;
+      };
+
+      if (bestScore >= HIGH_CONFIDENCE) {
+        // KB has a confident answer — use it exclusively
+        console.log(`[RAG] kb_only (best: ${bestScore.toFixed(3)})`);
+        contextText = buildKbContext(relevantChunks);
+        sourceMode  = 'kb_only';
+
+      } else if (bestScore >= WEAK_MATCH) {
+        // KB found something but it's weak — combine KB with internet search
+        console.log(`[RAG] kb_and_web (best: ${bestScore.toFixed(3)})`);
+        const kbCtx = buildKbContext(relevantChunks);
+        let webCtx  = null;
+        try {
+          webCtx = buildWebContext(await searchInternet(userMessage));
+        } catch (e) {
+          console.error('[RAG] Internet search failed (weak match):', e);
+        }
+
+        if (webCtx) {
+          contextText = `--- COMPANY DOCUMENTS ---\n\n${kbCtx}\n\n--- END COMPANY DOCUMENTS ---\n\n--- INTERNET SEARCH RESULTS ---\n\n${webCtx}\n\n--- END INTERNET RESULTS ---`;
+          sourceMode  = 'kb_and_web';
+        } else {
+          // Internet failed — use the partial KB result rather than nothing
+          contextText = kbCtx;
+          sourceMode  = 'kb_only';
+        }
+
       } else {
-        // Fallback to Internet Search
-        console.log('No relevant documents found. Searching the internet...');
-        const searchResults = await searchInternet(userMessage);
-        
-        if (searchResults && searchResults.results && searchResults.results.length > 0) {
-          isFromInternet = true;
-          const webContext = searchResults.results.map(r => 
-            `[Web Source: ${r.title}] (${r.url})\n${r.content}`
-          ).join('\n\n---\n\n');
-          
-          contextText = `AI SUMMARY OF WEB RESULTS: ${searchResults.answer || 'N/A'}\n\nDETAILED WEB RESULTS:\n${webContext}`;
+        // No usable KB results — fall back to internet search only
+        console.log(`[RAG] web_only (best: ${bestScore.toFixed(3)})`);
+        try {
+          const webCtx = buildWebContext(await searchInternet(userMessage));
+          if (webCtx) {
+            contextText = webCtx;
+            sourceMode  = 'web_only';
+          }
+        } catch (e) {
+          console.error('[RAG] Internet search failed (no KB match):', e);
         }
       }
-    } catch (embeddingError) {
-      console.error('Search error:', embeddingError);
+
+    } catch (err) {
+      console.error('[RAG] Embedding/search error:', err);
     }
 
-    // 3. Build the augmented system prompt
+    // Build the augmented system prompt based on which sources are available
     let finalPrompt = SYSTEM_PROMPT;
-    
-    if (contextText) {
-      if (isFromInternet) {
-        finalPrompt += `\n\nIMPORTANT: No information was found in the Edutech Global internal knowledge base. You have performed an internet search instead. 
-        \n\n--- INTERNET SEARCH RESULTS ---\n\n${contextText}\n\n--- END SEARCH RESULTS ---
-        \n\nPlease start your response by saying: "I couldn't find information on this in our internal documents, so I've checked the internet for you." Then answer based on the search results.`;
-      } else {
-        finalPrompt += `\n\n--- CONTEXT FROM COMPANY DOCUMENTS ---\n\n${contextText}\n\n--- END CONTEXT ---`;
-      }
+
+    if (sourceMode === 'kb_only') {
+      finalPrompt += `\n\n--- CONTEXT FROM COMPANY DOCUMENTS ---\n\n${contextText}\n\n--- END CONTEXT ---\n\nAnswer using only the company document context above. Do not reference external sources.`;
+
+    } else if (sourceMode === 'kb_and_web') {
+      finalPrompt += `\n\n${contextText}\n\nIMPORTANT: The knowledge base had partial information, so you also have internet search results. Synthesise both into a single cohesive answer. Prefer company documents for any organisation-specific facts. Begin your response with: "I found some related information in our internal documents and supplemented it with an internet search."`;
+
+    } else if (sourceMode === 'web_only') {
+      finalPrompt += `\n\n--- INTERNET SEARCH RESULTS ---\n\n${contextText}\n\n--- END SEARCH RESULTS ---\n\nThis question had no match in the Edutech Global knowledge base. Begin your response with: "I couldn't find this in our internal documents, so I've searched the internet for you." Answer based on the web results above. Do not invent any company-specific information.`;
+
     } else {
-      finalPrompt += `\n\nNote: No relevant documents were found in the knowledge base and no internet search results were available. Let the user know you don't have information about their specific question yet.`;
+      // sourceMode === 'none': both KB and internet returned nothing
+      finalPrompt += `\n\nNo relevant information was found in the knowledge base or via internet search. Tell the user clearly and politely that you don't have information on this topic yet, and suggest they contact their team lead or HR for help.`;
     }
 
-    // 4. Stream the response from OpenRouter
+    // Stream the response from OpenRouter
     const result = streamText({
       model: openrouter.chat('openai/gpt-4o-mini'),
       system: finalPrompt,
