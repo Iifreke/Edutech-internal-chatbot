@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Standard Operating Procedure (SOP): Edutech Global AI Assistant (Skylar)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #D31E1E;
+            border-bottom: 2px solid #D31E1E;
+            padding-bottom: 10px;
+            text-align: center;
+        }
+        h2 {
+            color: #111111;
+            margin-top: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #D31E1E;
+            margin-top: 20px;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul, ol {
+            margin-bottom: 20px;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: monospace;
+            color: #D31E1E;
+        }
+        .note {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #111111;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Standard Operating Procedure (SOP)</h1>
+        <p style="text-align: center; font-style: italic; color: #666;">Edutech Global AI Assistant (Skylar) Platform</p>
+        <p><strong>Document Version:</strong> 1.0<br>
+        <strong>Last Updated:</strong> May 2026<br>
+        <strong>System:</strong> Edutech Global Internal AI Knowledge Base Assistant</p>
+
+        <h2>1. Purpose and Scope</h2>
+        <p>This Standard Operating Procedure (SOP) outlines the standardized protocols for managing, maintaining, and updating the Edutech Global AI Assistant. This covers accessing the Admin Dashboard, uploading knowledge base documents, handling escalated leads, and troubleshooting core system functionalities. The scope includes administrative users and system maintainers.</p>
+
+        <h2>2. System Overview</h2>
+        <ul>
+            <li><strong>Frontend Application:</strong> Next.js (React)</li>
+            <li><strong>Backend Services:</strong> Next.js API Routes</li>
+            <li><strong>Database & Vector Storage:</strong> Supabase (PostgreSQL with pgvector)</li>
+            <li><strong>AI Inference:</strong> OpenRouter API (LLM Integration)</li>
+            <li><strong>Brand Identity:</strong> Edutech Global (Primary Red: <span class="highlight">#D31E1E</span>, Dark: <span class="highlight">#111111</span>)</li>
+        </ul>
+
+        <h2>3. Accessing the Admin Dashboard</h2>
+        <p>The Admin Dashboard is the central control hub for managing the AI Assistant's knowledge and monitoring interactions.</p>
+        <ol>
+            <li>Navigate to the deployed application URL and append <span class="highlight">/admin</span> (e.g., <code>https://yourdomain.com/admin</code>).</li>
+            <li>You will be prompted for an Admin Password. Enter the password configured in the <span class="highlight">ADMIN_PASSWORD</span> environment variable.</li>
+            <li>Upon successful authentication, you will have access to the Document Management and Lead Escalation panels.</li>
+        </ol>
+
+        <h2>4. Knowledge Base Management</h2>
+        <h3>4.1 Uploading Documents</h3>
+        <p>To improve the AI's accuracy, you must provide it with up-to-date company documents.</p>
+        <ol>
+            <li>In the Admin Dashboard, locate the "Upload Document" section.</li>
+            <li>Select the desired file (Supported formats: PDF, TXT, MD).</li>
+            <li>Click <strong>Upload</strong>.</li>
+            <li>The system will automatically extract the text, split it into semantic chunks, generate vector embeddings, and store them securely in Supabase. Wait for the success confirmation before leaving the page.</li>
+        </ol>
+        
+        <h3>4.2 Managing Existing Documents</h3>
+        <ul>
+            <li><strong>Viewing:</strong> The dashboard displays a list of all currently ingested documents.</li>
+            <li><strong>Reprocessing:</strong> If a document's content needs to be re-embedded or if an error occurred during chunking, click the <strong>Reprocess</strong> button next to the document.</li>
+            <li><strong>Deleting:</strong> To remove outdated knowledge, click <strong>Delete</strong>. This automatically purges associated vector chunks from the database to ensure the AI does not reference stale data.</li>
+        </ul>
+
+        <h2>5. Live Escalation and Lead Management</h2>
+        <p>When the AI Assistant encounters a query it cannot resolve or when a user requests human intervention, the chat is escalated.</p>
+        <ol>
+            <li>Monitor the <strong>Conversation List</strong> in the Admin Dashboard. Escalated chats will be highlighted.</li>
+            <li>The sidebar allows filtering leads by <strong>Global School</strong>. Ensure the "Babcock" university standardization is consistently applied when filtering.</li>
+            <li>Click on an active escalated lead to view the chat history.</li>
+            <li>Use the <strong>Live Admin Response System</strong> input field to send a manual reply. The system uses Supabase-polling to instantly deliver your response to the user's chat interface.</li>
+        </ol>
+
+        <h2>6. Scraping Web Content</h2>
+        <p>The platform supports ingesting live web content into the knowledge base.</p>
+        <ol>
+            <li>Navigate to the Web Scraping section in the Admin Dashboard.</li>
+            <li>Input the target URL.</li>
+            <li>Execute the scrape. The system will retrieve the text, clean it, chunk it, and embed it similarly to a document upload. Ensure you only scrape authorized URLs.</li>
+        </ol>
+
+        <h2>7. Maintenance and Troubleshooting</h2>
+        <h3>7.1 API Key Rotations</h3>
+        <p>If AI responses begin failing with 401/403 errors, verify the OpenRouter API Key.</p>
+        <ul>
+            <li>Update the <span class="highlight">OPENROUTER_API_KEY</span> in the <code>.env.local</code> file or deployment environment variables.</li>
+            <li>Restart the application server to apply changes.</li>
+        </ul>
+
+        <h3>7.2 Database Connection Issues</h3>
+        <p>If the dashboard fails to load documents or escalate leads:</p>
+        <ul>
+            <li>Verify <span class="highlight">NEXT_PUBLIC_SUPABASE_URL</span> and <span class="highlight">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>.</li>
+            <li>Ensure the Supabase project is not paused (applicable for free tier Supabase instances).</li>
+        </ul>
+
+        <div class="note">
+            <strong>Important:</strong> Never modify the <span class="highlight">kb_chunks</span> or <span class="highlight">kb_documents</span> tables directly via the Supabase SQL editor unless performing emergency data migrations. Always use the Admin Dashboard.
+        </div>
+
+        <h2>8. Emergency Procedures</h2>
+        <p>In the event of a critical failure (e.g., AI generating inappropriate responses, data leak):</p>
+        <ol>
+            <li>Immediately take the application offline by disabling the deployment via the hosting provider dashboard (e.g., Vercel).</li>
+            <li>Change the <span class="highlight">ADMIN_PASSWORD</span>.</li>
+            <li>Rotate the <span class="highlight">OPENROUTER_API_KEY</span>.</li>
+            <li>Audit the knowledge base for poisoned or incorrect documents and delete them.</li>
+            <li>Restore service and monitor closely.</li>
+        </ol>
+
+    </div>
+</body>
+</html>
