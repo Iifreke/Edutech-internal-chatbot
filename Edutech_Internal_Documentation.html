@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edutech Internal AI Assistant - Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-red: #D31E1E;
+            --primary-dark: #111111;
+            --text-color: #333333;
+            --bg-color: #f9f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background: var(--card-bg);
+            padding: 50px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        header {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        h2 {
+            color: var(--primary-red);
+            font-size: 1.75rem;
+            margin-top: 40px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        h3 {
+            color: var(--primary-dark);
+            font-size: 1.25rem;
+            margin-top: 25px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+        }
+
+        ul, ol {
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            font-size: 1.05rem;
+        }
+
+        .badge {
+            background-color: var(--primary-red);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+        pre {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        code {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #f1f5f9;
+            color: var(--primary-red);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .callout {
+            background-color: #fef2f2;
+            border-left: 4px solid var(--primary-red);
+            padding: 15px 20px;
+            margin: 25px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Edutech Internal AI Assistant</h1>
+        <p>Comprehensive Technical Documentation & Architecture Guide</p>
+    </header>
+
+    <p>The <strong>Edutech Global AI Assistant</strong> (formerly known as Skylar/Maverick) is a full-stack, Retrieval-Augmented Generation (RAG) powered web application. It is designed to act as a knowledgeable, friendly, and professional helper for new staff, interns, and team members at Edutech Global.</p>
+
+    <h2>🌟 Key Features</h2>
+    <ul>
+        <li><strong>Document Knowledge Base:</strong> Directly upload PDF, DOCX, and XLSX documents to build an internal organizational memory.</li>
+        <li><strong>Advanced RAG Architecture:</strong> Vector embeddings are generated via OpenAI (<code>text-embedding-3-small</code>) and stored/indexed in Supabase using <code>pgvector</code> and HNSW indexing for rapid semantic search.</li>
+        <li><strong>Smart Fallback (Tavily Integration):</strong> The AI intelligently decides if it has enough internal knowledge to answer a query. If internal context is missing or weak, it supplements or fully delegates the query to the web via the Tavily Advanced Search API.</li>
+        <li><strong>Secure Admin Panel:</strong> Built-in dashboard (<code>/admin</code>) gated by password protection allowing admins to upload, chunk, and manage knowledge base documents natively.</li>
+        <li><strong>Modern UI:</strong> Built with React/Next.js 16 featuring a dynamic chat interface that streams responses in real-time.</li>
+    </ul>
+
+    <h2>🛠 Tech Stack</h2>
+    <ul>
+        <li><strong>Framework:</strong> Next.js 16 (App Router)</li>
+        <li><strong>AI/LLM Routing:</strong> <a href="https://openrouter.ai/" target="_blank">OpenRouter</a> using <code>openai/gpt-4o-mini</code></li>
+        <li><strong>Embeddings:</strong> OpenAI <code>text-embedding-3-small</code> (via OpenRouter)</li>
+        <li><strong>Vector Database:</strong> Supabase (<code>pgvector</code> + HNSW indexing)</li>
+        <li><strong>Web Search API:</strong> Tavily</li>
+        <li><strong>Document Parsing:</strong> <code>pdf-parse</code>, <code>mammoth</code> (DOCX), <code>xlsx</code></li>
+        <li><strong>AI SDK:</strong> Vercel AI SDK (<code>@ai-sdk/openai</code>, <code>@ai-sdk/react</code>)</li>
+    </ul>
+
+    <h2>🏗 Architecture & Flow</h2>
+    <ol>
+        <li><strong>User Query:</strong> User submits a message via the Chat Interface.</li>
+        <li><strong>Embedding Generation:</strong> The query is converted into a 1536-dimensional vector using <code>text-embedding-3-small</code>.</li>
+        <li><strong>Semantic Search (Supabase):</strong> The system searches the <code>kb_chunks</code> table using vector cosine similarity.</li>
+        <li><strong>Confidence Routing:</strong>
+            <ul>
+                <li><strong>High Confidence (>0.6):</strong> Only Internal Knowledge Base context is used.</li>
+                <li><strong>Weak Match (0.3 - 0.6):</strong> Both Internal KB + Internet Search (Tavily) are merged into the prompt.</li>
+                <li><strong>No Match (&lt;0.3):</strong> System falls back entirely to Tavily internet search.</li>
+            </ul>
+        </li>
+        <li><strong>LLM Synthesis:</strong> The context is fed to the <code>gpt-4o-mini</code> model via OpenRouter, which streams the formatted response back to the UI.</li>
+    </ol>
+
+    <h2>🚀 Getting Started</h2>
+
+    <h3>1. Prerequisites</h3>
+    <ul>
+        <li>Node.js &gt;= 18</li>
+        <li>A Supabase project</li>
+        <li>An OpenRouter account + API Key</li>
+        <li>A Tavily account + API Key</li>
+    </ul>
+
+    <h3>2. Environment Variables</h3>
+    <p>Create a <code>.env.local</code> file in the root directory:</p>
+<pre><code># OpenRouter API Key (for LLM and Embeddings)
+OPENROUTER_API_KEY=your_openrouter_api_key_here
+
+# Supabase Credentials
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key_here
+
+# Tavily Web Search API Key
+TAVILY_API_KEY=your_tavily_api_key_here
+
+# Admin Password for the Document Upload Dashboard
+ADMIN_PASSWORD=your_secure_password_here
+</code></pre>
+
+    <div class="callout">
+        <strong>Note:</strong> Make sure not to commit your <code>.env.local</code> file to version control.
+    </div>
+
+    <h3>3. Database Setup</h3>
+    <p>Please refer to the <code>SUPABASE_SETUP.md</code> file for the exact SQL commands to:</p>
+    <ul>
+        <li>Enable <code>pgvector</code></li>
+        <li>Create <code>kb_documents</code> and <code>kb_chunks</code> tables</li>
+        <li>Set up HNSW indexes and match functions</li>
+        <li>Configure the private <code>knowledgebase</code> storage bucket</li>
+    </ul>
+
+    <h3>4. Running Locally</h3>
+<pre><code>npm install
+npm run dev
+</code></pre>
+    <p>Open <code>http://localhost:3000</code> to view the chat interface.</p>
+    <p>Navigate to <code>http://localhost:3000/admin</code> to manage knowledge base documents.</p>
+
+    <h2>📚 Project Structure</h2>
+    <ul>
+        <li><code>app/api/chat/route.js</code>: Core RAG and Context Routing logic.</li>
+        <li><code>app/admin/</code>: Document management dashboard and secure upload functionality.</li>
+        <li><code>app/components/</code>: Reusable UI elements (ChatInterface, FileUploader, etc.).</li>
+        <li><code>lib/openrouter.js</code>: System prompts, identity setup, and LLM configuration.</li>
+        <li><code>lib/supabase.js</code>: Database interaction & search matching logic.</li>
+        <li><code>lib/embeddings.js</code>: Embedding generation logic.</li>
+        <li><code>lib/tavily.js</code>: Fallback internet search.</li>
+        <li><code>lib/parsers.js</code> & <code>lib/chunker.js</code>: Document processing and text splitting pipelines.</li>
+    </ul>
+
+    <div class="footer">
+        &copy; 2026 Edutech Global. Internal Confidential Documentation.
+    </div>
+</div>
+
+</body>
+</html>
