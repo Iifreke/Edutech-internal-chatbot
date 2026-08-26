@@ -79,6 +79,14 @@ a:hover { color: var(--secondary); }
   overflow: hidden;
 }
 
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari: use dynamic viewport height so header isn't cut off */
+  .app-shell {
+    height: -webkit-fill-available;
+    max-height: -webkit-fill-available;
+  }
+}
+
 /* ── Header ── */
 .header {
   display: flex;
@@ -1057,11 +1065,21 @@ a:hover { color: var(--secondary); }
 /* ── Responsive ── */
 @media (max-width: 768px) {
   /* ── Header ── */
-  .header { padding: 10px 16px; }
+  .header {
+    padding: 10px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    flex-shrink: 0;
+    min-height: 56px;
+  }
   .header-title { font-size: 15px; }
   .header-subtitle { display: none; }
   .header-user { display: none; }
   .header-nav { gap: 4px; }
+  .header-logo-img { height: 30px; }
+  .header-link { padding: 6px 10px; font-size: 12px; }
+  .header-signout { padding: 6px 10px; font-size: 12px; }
 
   /* ── Chat ── */
   .chat-messages { padding: 16px; }
