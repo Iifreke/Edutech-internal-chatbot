@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
   const pathname = usePathname();
+  const { user, signOut } = useAuth();
 
   return (
     <header className="header">
@@ -19,6 +21,14 @@ export default function Header() {
         <Link href="/admin" className={`header-link ${pathname === '/admin' ? 'active' : ''}`}>
           ⚙️ Admin
         </Link>
+        {user && (
+          <>
+            <span className="header-user">{user.email}</span>
+            <button className="header-link header-signout" onClick={signOut}>
+              Sign Out
+            </button>
+          </>
+        )}
       </nav>
     </header>
   );

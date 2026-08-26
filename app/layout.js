@@ -1,4 +1,5 @@
 import './globals.css';
+import { AuthProvider } from './context/AuthContext';
 
 export const metadata = {
   title: 'Edutech Global — AI Assistant',
@@ -13,7 +14,11 @@ export default function RootLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
         <meta name="theme-color" content="#111111" />
       </head>
-      <body>{children}</body>
+      <body>
+        <AuthProvider>
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

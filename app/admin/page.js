@@ -1,55 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
-import PasswordGate from '../components/PasswordGate';
+import AuthPage from '../components/AuthPage';
 import FileUploader from '../components/FileUploader';
 import DocumentList from '../components/DocumentList';
 import WebSourceManager from '../components/WebSourceManager';
 
 export default function AdminPage() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
+  const { user, loading } = useAuth();
   const [refreshKey, setRefreshKey] = useState(0);
 
-  useEffect(() => {
-    const saved = sessionStorage.getItem('admin_password');
-    if (saved) {
-      setPassword(saved);
-      setAuthenticated(true);
-    }
-  }, []);
+  if (loading) return <div className="auth-overlay"><div className="gate-icon" style={{ fontSize: 32 }}>⏳</div></div>;
+  if (!user) return <AuthPage />;
 
-  const handleAuthenticated = (pwd) => {
-    setPassword(pwd);
-    setAuthenticated(true);
-  };
-
-  const handleLogout = () => {
-    sessionStorage.removeItem('admin_password');
-    setAuthenticated(false);
-    setPassword('');
-  };
-
-  if (!authenticated) {
-    return <PasswordGate onAuthenticated={handleAuthenticated} />;
-  }
+  const password = process.env.NEXT_PUBLIC_ADMIN_PASS || '';
 
   return (
     <div className="app-shell">
       <Header />
       <div className="admin-container">
         <div className="admin-content">
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <h1 className="admin-title">Knowledge Base Manager</h1>
-              <p className="admin-desc">
-                Upload, update, and manage documents that power the AI assistant.
-              </p>
-            </div>
-            <button className="btn btn-ghost btn-sm" onClick={handleLogout}>
-              🚪 Logout
-            </button>
+          <div>
+            <h1 className="admin-title">Knowledge Base Manager</h1>
+            <p className="admin-desc">
+              Upload, update, and manage documents that power the AI assistant.
+            </p>
           </div>
 
           <div className="admin-section">
