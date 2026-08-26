@@ -29,10 +29,21 @@ export function AuthProvider({ children }) {
     return data;
   }
 
-  async function signUp(email, password) {
-    const { data, error } = await getSupabaseClient().auth.signUp({ email, password });
+  async function signUp(email, password, metadata = {}) {
+    const { data, error } = await getSupabaseClient().auth.signUp({
+      email,
+      password,
+      options: { data: metadata },
+    });
     if (error) throw error;
     return data;
+  }
+
+  async function resetPassword(email) {
+    const { error } = await getSupabaseClient().auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    });
+    if (error) throw error;
   }
 
   async function signOut() {
@@ -40,7 +51,7 @@ export function AuthProvider({ children }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

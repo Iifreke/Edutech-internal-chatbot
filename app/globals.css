@@ -1012,6 +1012,46 @@ a:hover { color: var(--secondary); }
 
 .auth-link:hover { color: var(--secondary); }
 
+.auth-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.auth-input-wrap .auth-input {
+  width: 100%;
+  padding-right: 44px;
+}
+
+.auth-eye {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.auth-eye:hover { color: var(--text-secondary); }
+
+.auth-select {
+  appearance: none;
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a5a5a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.auth-select option {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
 /* ── Responsive ── */
 @media (max-width: 768px) {
   .header { padding: 10px 16px; }
