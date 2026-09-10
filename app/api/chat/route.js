@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages } from 'ai';
-import { openrouter, SYSTEM_PROMPT } from '@/lib/openrouter';
+import { chatModel, SYSTEM_PROMPT } from '@/lib/openrouter';
 import { generateEmbedding } from '@/lib/embeddings';
 import { searchChunks } from '@/lib/supabase';
 import { searchInternet } from '@/lib/tavily';
@@ -117,7 +117,7 @@ export async function POST(request) {
 
     // Stream the response from OpenRouter
     const result = streamText({
-      model: openrouter.chat('openai/gpt-4o-mini'),
+      model: chatModel,
       system: finalPrompt,
       messages: await convertToModelMessages(messages),
     });
