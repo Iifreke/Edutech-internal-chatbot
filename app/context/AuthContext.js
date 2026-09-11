@@ -50,8 +50,13 @@ export function AuthProvider({ children }) {
     await getSupabaseClient().auth.signOut();
   }
 
+  async function getAccessToken() {
+    const { data: { session } } = await getSupabaseClient().auth.getSession();
+    return session?.access_token ?? null;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, resetPassword, getAccessToken }}>
       {children}
     </AuthContext.Provider>
   );

@@ -14,12 +14,17 @@ const SUGGESTIONS = [
 ];
 
 export default function ChatInterface() {
-  const { user } = useAuth();
+  const { user, getAccessToken } = useAuth();
   const [conversationId, setConversationId] = useState(() => `conv_${Date.now()}`);
   const [conversations, setConversations] = useState([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loadingConv, setLoadingConv] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [accessToken, setAccessToken] = useState(null);
+
+  useEffect(() => {
+    getAccessToken().then(setAccessToken);
+  }, [user]);
 
   const fetchConversations = useCallback(async () => {
     if (!user?.email) return;
@@ -41,14 +46,10 @@ export default function ChatInterface() {
   const { messages, status, error, sendMessage, setMessages, clearError } = useChat({
     api: '/api/chat',
     id: conversationId,
+    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
     body: {
       conversationId,
       sessionId: conversationId,
-      user: {
-        email: user?.email,
-        name: user?.user_metadata?.name || user?.email?.split('@')[0],
-        department: user?.user_metadata?.department,
-      },
     },
     onFinish: () => {
       fetchConversations();

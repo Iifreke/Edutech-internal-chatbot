@@ -1,7 +1,24 @@
 import { streamText, generateText, convertToModelMessages } from 'ai';
+import { createClient } from '@supabase/supabase-js';
 import { chatModel, SYSTEM_PROMPT } from '@/lib/openai';
 import { generateEmbedding } from '@/lib/embeddings';
 import { searchChunks, findOrCreateLead, saveConversation } from '@/lib/supabase';
+
+async function getUserFromRequest(request) {
+  try {
+    const auth = request.headers.get('Authorization');
+    if (!auth?.startsWith('Bearer ')) return null;
+    const token = auth.slice(7);
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+    const { data: { user } } = await client.auth.getUser(token);
+    return user ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export const maxDuration = 60;
 
@@ -93,7 +110,8 @@ Output:`;
 
 export async function POST(request) {
   try {
-    const { messages, conversationId, sessionId, user } = await request.json();
+    const authUser = await getUserFromRequest(request);
+    const { messages, conversationId, sessionId } = await request.json();
 
     if (!messages || messages.length === 0) {
       return Response.json({ error: 'No messages provided' }, { status: 400 });
@@ -175,8 +193,8 @@ Instructions for this response:
       messages: await convertToModelMessages(messages),
       onFinish: async ({ text }) => {
         try {
-          const userEmail = user?.email;
-          const userName = user?.name || userEmail?.split('@')[0];
+          const userEmail = authUser?.email;
+          const userName = authUser?.user_metadata?.name || userEmail?.split('@')[0];
           const activeConvId = conversationId || sessionId || `conv_${Date.now()}`;
 
           // Find or create lead for the contact
