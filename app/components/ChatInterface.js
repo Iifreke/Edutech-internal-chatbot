@@ -123,12 +123,16 @@ export default function ChatInterface() {
       if (res.ok) {
         const data = await res.json();
         if (data.conversation?.messages) {
-          const formattedMsgs = data.conversation.messages.map((m, idx) => ({
-            id: m.id || `msg_${idx}`,
-            role: m.role,
-            content: m.content || '',
-            parts: [{ type: 'text', text: m.content || '' }],
-          }));
+          const formattedMsgs = data.conversation.messages.map((m, idx) => {
+            // ai@6 / @ai-sdk/react@3 stores text in parts; content may be ''
+            const text = m.content || m.parts?.find(p => p.type === 'text')?.text || '';
+            return {
+              id: m.id || `msg_${idx}`,
+              role: m.role,
+              content: text,
+              parts: [{ type: 'text', text }],
+            };
+          });
           pendingMessagesRef.current = formattedMsgs;
           setConversationId(conv.id);
         }
