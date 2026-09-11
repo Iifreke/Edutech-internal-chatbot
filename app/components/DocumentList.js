@@ -103,6 +103,7 @@ export default function DocumentList({ password, refreshTrigger }) {
       case 'pdf': return '📕';
       case 'docx': return '📘';
       case 'xlsx': return '📗';
+      case 'txt': return '📝';
       default: return '📄';
     }
   };
@@ -183,7 +184,7 @@ export default function DocumentList({ password, refreshTrigger }) {
             </p>
             <input
               type="file"
-              accept=".pdf,.docx,.doc,.xlsx,.xls"
+              accept=".pdf,.docx,.doc,.txt,.md,.xlsx,.xls,.csv"
               onChange={(e) => {
                 const f = e.target.files[0];
                 if (f) handleReprocess(f);

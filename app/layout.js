@@ -2,9 +2,9 @@ import './globals.css';
 import { AuthProvider } from './context/AuthContext';
 
 export const metadata = {
-  title: 'Edutech Global — AI Assistant',
-  description: 'Your intelligent knowledge base assistant for Edutech Global. Ask any question about the organization and get instant answers.',
-  keywords: ['Edutech Global', 'AI Assistant', 'Knowledge Base', 'Onboarding'],
+  title: 'EduAssist — Edutech Global AI Assistant',
+  description: 'Your internal AI knowledge assistant for Edutech Global. Ask any question about the organization, products, and policies to get instant answers.',
+  keywords: ['EduAssist', 'Edutech Global', 'AI Assistant', 'Knowledge Base', 'Internal Assistant'],
   icons: {
     icon: '/edutech-logo-white.png',
     shortcut: '/edutech-logo-white.png',

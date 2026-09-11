@@ -1,5 +1,5 @@
 import { streamText, convertToModelMessages } from 'ai';
-import { chatModel, SYSTEM_PROMPT } from '@/lib/openrouter';
+import { chatModel, SYSTEM_PROMPT } from '@/lib/openai';
 import { generateEmbedding } from '@/lib/embeddings';
 import { searchChunks } from '@/lib/supabase';
 import { searchInternet } from '@/lib/tavily';
@@ -115,7 +115,7 @@ export async function POST(request) {
       finalPrompt += `\n\nNo relevant information was found in the knowledge base or via internet search. Tell the user clearly and politely that you don't have information on this topic yet, and suggest they contact their team lead or HR for help.`;
     }
 
-    // Stream the response from OpenRouter
+    // Stream the response from OpenAI (gpt-4o-mini)
     const result = streamText({
       model: chatModel,
       system: finalPrompt,

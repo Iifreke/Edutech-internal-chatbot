@@ -49,9 +49,9 @@ export default function ChatInterface() {
         {messages.length === 0 ? (
           <div className="chat-empty">
             <div className="chat-empty-icon">🎓</div>
-            <h2>Welcome to Edutech Global</h2>
+            <h2>Welcome to EduAssist</h2>
             <p>
-              I&apos;m your AI knowledge assistant. Ask me anything about the organization,
+              I&apos;m your internal AI knowledge assistant. Ask me anything about Edutech Global,
               our products, policies, or processes — I&apos;ll find the answer from our
               official documents.
             </p>
@@ -94,7 +94,7 @@ export default function ChatInterface() {
         <form className="chat-input-wrapper" onSubmit={onSubmit}>
           <textarea
             className="chat-input"
-            placeholder="Ask anything about Edutech Global..."
+            placeholder="Ask EduAssist anything about Edutech Global..."
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyDown={handleKeyDown}

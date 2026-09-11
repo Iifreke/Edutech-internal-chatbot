@@ -15,9 +15,12 @@ export default function FileUploader({ password, onUploadComplete }) {
     'application/msword',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     'application/vnd.ms-excel',
+    'text/plain',
+    'text/markdown',
+    'text/csv',
   ];
 
-  const ALLOWED_EXTENSIONS = ['.pdf', '.docx', '.doc', '.xlsx', '.xls'];
+  const ALLOWED_EXTENSIONS = ['.pdf', '.docx', '.doc', '.txt', '.md', '.xlsx', '.xls', '.csv'];
 
   const isValidFile = (file) => {
     const ext = '.' + file.name.split('.').pop().toLowerCase();
@@ -26,7 +29,7 @@ export default function FileUploader({ password, onUploadComplete }) {
 
   const uploadFile = async (file) => {
     if (!isValidFile(file)) {
-      setStatus('❌ Unsupported file type. Use PDF, DOCX, or XLSX.');
+      setStatus('❌ Unsupported file type. Use PDF, DOCX, DOC, TXT, MD, or XLSX.');
       return;
     }
 
@@ -108,13 +111,13 @@ export default function FileUploader({ password, onUploadComplete }) {
           {uploading ? 'Processing document...' : 'Drop a file here or click to browse'}
         </div>
         <div className="uploader-hint">
-          Supports PDF, DOCX, XLSX — Max 10MB
+          Supports PDF, DOCX, DOC, TXT, MD, XLSX — Max 10MB
         </div>
         <input
           ref={fileInputRef}
           type="file"
           className="uploader-input"
-          accept=".pdf,.docx,.doc,.xlsx,.xls"
+          accept=".pdf,.docx,.doc,.txt,.md,.xlsx,.xls,.csv"
           onChange={handleFileSelect}
         />
       </div>

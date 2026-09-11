@@ -25,7 +25,7 @@ export async function POST(request) {
 
     if (fileType === 'unknown') {
       return Response.json(
-        { error: 'Unsupported file type. Please upload PDF, DOCX, or XLSX files.' },
+        { error: 'Unsupported file type. Please upload PDF, DOCX, DOC, TXT, MD, or XLSX files.' },
         { status: 400 }
       );
     }
