@@ -7,6 +7,7 @@ import AuthPage from '../components/AuthPage';
 import FileUploader from '../components/FileUploader';
 import DocumentList from '../components/DocumentList';
 import WebSourceManager from '../components/WebSourceManager';
+import LeadSearchManager from '../components/LeadSearchManager';
 
 export default function AdminPage() {
   const { user, loading } = useAuth();
@@ -55,6 +56,14 @@ export default function AdminPage() {
           <div className="admin-section">
             <h2 className="admin-section-title">📚 Uploaded Documents</h2>
             <DocumentList password={password} refreshTrigger={refreshKey} />
+          </div>
+
+          <div className="admin-section">
+            <h2 className="admin-section-title">👥 Contact Searches & Leads</h2>
+            <p className="admin-desc" style={{ marginBottom: 12 }}>
+              Inspect all contacts who searched or chatted with EduAssist, view their query history, and review transcripts.
+            </p>
+            <LeadSearchManager password={password} refreshTrigger={refreshKey} />
           </div>
         </div>
       </div>
