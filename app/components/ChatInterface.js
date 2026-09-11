@@ -57,10 +57,18 @@ export default function ChatInterface() {
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const messagesEndRef = useRef(null);
+  const pendingMessagesRef = useRef(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  useEffect(() => {
+    if (pendingMessagesRef.current !== null) {
+      setMessages(pendingMessagesRef.current);
+      pendingMessagesRef.current = null;
+    }
+  }, [conversationId, setMessages]);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -94,14 +102,14 @@ export default function ChatInterface() {
       if (res.ok) {
         const data = await res.json();
         if (data.conversation?.messages) {
-          setConversationId(conv.id);
           const formattedMsgs = data.conversation.messages.map((m, idx) => ({
             id: m.id || `msg_${idx}`,
             role: m.role,
             content: m.content || '',
             parts: [{ type: 'text', text: m.content || '' }],
           }));
-          setMessages(formattedMsgs);
+          pendingMessagesRef.current = formattedMsgs;
+          setConversationId(conv.id);
         }
       }
     } catch (err) {
