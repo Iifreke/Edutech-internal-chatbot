@@ -1,7 +1,7 @@
 import { parseFile, getFileType } from '@/lib/parsers';
 import { chunkText } from '@/lib/chunker';
 import { generateEmbeddings } from '@/lib/embeddings';
-import { deleteChunksByDocument, insertChunks, uploadFile, supabase } from '@/lib/supabase';
+import { deleteChunksByDocument, insertChunks, uploadFile, sanitizeStoragePath, supabase } from '@/lib/supabase';
 
 export const maxDuration = 120;
 
@@ -39,9 +39,13 @@ export async function POST(request) {
     // 1. Delete old chunks
     await deleteChunksByDocument(documentId);
 
-    // 2. Upload new file to storage
-    const storagePath = `documents/${Date.now()}-${filename}`;
-    await uploadFile(buffer, storagePath);
+    // 2. Upload new file to storage (safely sanitized)
+    const storagePath = sanitizeStoragePath(`documents/${Date.now()}-${filename}`);
+    try {
+      await uploadFile(buffer, storagePath);
+    } catch (storageErr) {
+      console.warn('Supabase storage upload warning:', storageErr.message);
+    }
 
     // 3. Parse and chunk
     const text = await parseFile(buffer, filename);
