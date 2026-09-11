@@ -1,14 +1,27 @@
+import { createClient } from '@supabase/supabase-js';
 import { listUserConversations, saveConversation, findOrCreateLead } from '@/lib/supabase';
+
+async function getEmailFromToken(request) {
+  try {
+    const auth = request.headers.get('Authorization');
+    if (!auth?.startsWith('Bearer ')) return null;
+    const token = auth.slice(7);
+    const client = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    );
+    const { data: { user } } = await client.auth.getUser(token);
+    return user?.email ?? null;
+  } catch {
+    return null;
+  }
+}
 
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
-
-    if (!email) {
-      return Response.json({ conversations: [] });
-    }
-
+    if (!email) return Response.json({ conversations: [] });
     const conversations = await listUserConversations(email);
     return Response.json({ conversations });
   } catch (error) {
@@ -19,36 +32,28 @@ export async function GET(request) {
 
 export async function POST(request) {
   try {
-    const { email, name, title } = await request.json();
-    const sessionId = `conv_${Date.now()}`;
+    const email = await getEmailFromToken(request);
+    if (!email) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    let lead = null;
-    if (email) {
-      lead = await findOrCreateLead({
-        email,
-        name: name || email.split('@')[0],
-        sessionId,
-      });
-    }
+    const { conversationId, sessionId, messages } = await request.json();
+    const activeId = conversationId || sessionId || `conv_${Date.now()}`;
 
-    const initialMessages = [];
+    const lead = await findOrCreateLead({
+      email,
+      name: email.split('@')[0],
+      sessionId: activeId,
+    });
+
     const conv = await saveConversation({
-      sessionId,
+      conversationId: activeId,
+      sessionId: activeId,
       leadId: lead?.id,
-      messages: initialMessages,
+      messages: messages || [],
     });
 
-    return Response.json({
-      success: true,
-      conversation: {
-        id: conv ? conv.id : sessionId,
-        sessionId,
-        title: title || 'New Search',
-        messages: [],
-      },
-    });
+    return Response.json({ success: true, id: conv?.id ?? activeId });
   } catch (error) {
-    console.error('Create conversation error:', error);
-    return Response.json({ error: 'Failed to create conversation' }, { status: 500 });
+    console.error('Save conversation error:', error);
+    return Response.json({ error: 'Failed to save conversation' }, { status: 500 });
   }
 }

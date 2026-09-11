@@ -2,7 +2,7 @@ import { streamText, generateText, convertToModelMessages } from 'ai';
 import { createClient } from '@supabase/supabase-js';
 import { chatModel, SYSTEM_PROMPT } from '@/lib/openai';
 import { generateEmbedding } from '@/lib/embeddings';
-import { searchChunks, findOrCreateLead, saveConversation } from '@/lib/supabase';
+import { searchChunks } from '@/lib/supabase';
 
 async function getUserFromRequest(request) {
   try {
@@ -191,50 +191,6 @@ Instructions for this response:
       model: chatModel,
       system: finalPrompt,
       messages: await convertToModelMessages(messages),
-      onFinish: async ({ text }) => {
-        try {
-          const userEmail = authUser?.email;
-          const userName = authUser?.user_metadata?.name || userEmail?.split('@')[0];
-          const activeConvId = conversationId || sessionId || `conv_${Date.now()}`;
-
-          // Find or create lead for the contact
-          let lead = null;
-          if (userEmail || activeConvId) {
-            lead = await findOrCreateLead({
-              email: userEmail,
-              name: userName,
-              sessionId: activeConvId,
-            });
-          }
-
-          // Format full conversation history with the assistant response
-          const fullHistory = [
-            ...messages.map((m, idx) => ({
-              id: m.id || `msg_${idx}_${Date.now()}`,
-              role: m.role,
-              content: typeof m.content === 'string'
-                ? m.content
-                : m.parts?.map((p) => p.text || '').join('') || '',
-            })),
-            {
-              id: `msg_asst_${Date.now()}`,
-              role: 'assistant',
-              content: text,
-              createdAt: new Date().toISOString(),
-            },
-          ];
-
-          // Persist conversation thread to Supabase
-          await saveConversation({
-            conversationId: activeConvId,
-            sessionId: activeConvId,
-            leadId: lead?.id,
-            messages: fullHistory,
-          });
-        } catch (saveErr) {
-          console.error('[Chat] Failed to persist contact search and conversation:', saveErr);
-        }
-      },
     });
 
     return result.toUIMessageStreamResponse();

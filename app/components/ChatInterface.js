@@ -38,29 +38,43 @@ export default function ChatInterface() {
     fetchConversations();
   }, [fetchConversations]);
 
-  const authedFetch = useCallback(async (url, options) => {
-    const token = await getAccessToken();
-    return fetch(url, {
-      ...options,
-      headers: {
-        ...options?.headers,
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-    });
-  }, [getAccessToken]);
+  const messagesRef = useRef([]);
+
+  const saveConversation = useCallback(async (msgs) => {
+    try {
+      const token = await getAccessToken();
+      if (!token) return;
+      await fetch('/api/conversations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          conversationId,
+          sessionId: conversationId,
+          messages: msgs,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to save conversation:', err);
+    }
+  }, [conversationId, getAccessToken]);
 
   const { messages, status, error, sendMessage, setMessages, clearError } = useChat({
     api: '/api/chat',
     id: conversationId,
-    fetch: authedFetch,
-    body: {
-      conversationId,
-      sessionId: conversationId,
-    },
-    onFinish: () => {
+    body: { conversationId, sessionId: conversationId },
+    onFinish: async (message) => {
+      const allMessages = [...messagesRef.current];
+      await saveConversation(allMessages);
       fetchConversations();
     },
   });
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const isLoading = status === 'submitted' || status === 'streaming';
   const messagesEndRef = useRef(null);
