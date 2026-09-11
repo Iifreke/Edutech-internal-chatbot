@@ -228,5 +228,43 @@ CREATE POLICY "service_role_storage_all" ON storage.objects
   USING (bucket_id = 'knowledgebase')
   WITH CHECK (bucket_id = 'knowledgebase');
 
+-- ============================================================
+-- 11. Authentication Trigger (Connects Sign Up directly to Leads)
+-- ============================================================
+-- When a user registers via Supabase Auth (Sign Up), automatically
+-- create or link their contact/lead profile in the public.leads table.
+CREATE OR REPLACE FUNCTION public.handle_new_auth_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.leads (
+    id,
+    email,
+    name,
+    channel,
+    lead_tier,
+    lead_score
+  )
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    'web',
+    'COLD',
+    0
+  )
+  ON CONFLICT (id) DO UPDATE
+  SET email = EXCLUDED.email,
+      name = COALESCE(EXCLUDED.name, leads.name),
+      updated_at = NOW();
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_auth_user();
+
 -- Verify configuration
-SELECT 'EduAssist Supabase setup completed successfully!' AS status;
+SELECT 'EduAssist Supabase setup (including Auth trigger) completed successfully!' AS status;
