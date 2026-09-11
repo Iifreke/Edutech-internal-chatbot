@@ -20,11 +20,6 @@ export default function ChatInterface() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [loadingConv, setLoadingConv] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [accessToken, setAccessToken] = useState(null);
-
-  useEffect(() => {
-    getAccessToken().then(setAccessToken);
-  }, [user]);
 
   const fetchConversations = useCallback(async () => {
     if (!user?.email) return;
@@ -43,10 +38,21 @@ export default function ChatInterface() {
     fetchConversations();
   }, [fetchConversations]);
 
+  const authedFetch = useCallback(async (url, options) => {
+    const token = await getAccessToken();
+    return fetch(url, {
+      ...options,
+      headers: {
+        ...options?.headers,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+    });
+  }, [getAccessToken]);
+
   const { messages, status, error, sendMessage, setMessages, clearError } = useChat({
     api: '/api/chat',
     id: conversationId,
-    headers: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
+    fetch: authedFetch,
     body: {
       conversationId,
       sessionId: conversationId,
