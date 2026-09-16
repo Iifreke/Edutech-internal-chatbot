@@ -210,11 +210,6 @@ export default function ChatInterface() {
           )}
         </div>
 
-        {/* ── Sidebar Footer Branding ── */}
-        <div className="sidebar-footer">
-          <img src="/edutech-logo-white.png" alt="EduTech Global" className="sidebar-footer-logo" />
-          <span className="sidebar-footer-name">EduTech Global</span>
-        </div>
       </aside>
 
       {/* ── Main Chat Area ── */}
