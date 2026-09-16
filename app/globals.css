@@ -330,6 +330,29 @@ a:hover { color: var(--secondary); }
   color: var(--danger);
 }
 
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.sidebar-footer-logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+.sidebar-footer-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
 .chat-top-bar {
   display: flex;
   align-items: center;
