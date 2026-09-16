@@ -210,6 +210,11 @@ export default function ChatInterface() {
           )}
         </div>
 
+        <div className="sidebar-footer">
+          <div className="sidebar-footer-logo-wrap">
+            <img src="/edutech-logo-white.png" alt="logo" className="sidebar-footer-logo" />
+          </div>
+        </div>
       </aside>
 
       {/* ── Main Chat Area ── */}

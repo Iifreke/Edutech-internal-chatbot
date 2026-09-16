@@ -230,6 +230,11 @@ export default function AuthPage() {
             </p>
           </form>
         )}
+        <div className="auth-card-footer">
+          <div className="auth-logo-wrap">
+            <img src="/edutech-logo-white.png" alt="logo" className="auth-logo" />
+          </div>
+        </div>
       </div>
     </div>
   );
