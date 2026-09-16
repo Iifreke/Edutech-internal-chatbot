@@ -6,10 +6,10 @@ import { useAuth } from '../context/AuthContext';
 import MessageBubble from './MessageBubble';
 
 const SUGGESTIONS = [
-  'What is Edutech Global?',
   'Tell me about Purple Squirrel',
   'What is Study Buddy?',
   'What is The Hub?',
+  'What programs are available?',
   'What AI initiatives does Edutech have?',
 ];
 
@@ -172,6 +172,13 @@ export default function ChatInterface() {
             <span>✨</span>
             <span>+ New Search</span>
           </button>
+          <button
+            className="sidebar-collapse-btn"
+            onClick={() => setSidebarOpen(false)}
+            title="Close sidebar"
+          >
+            ‹
+          </button>
         </div>
 
         <div className="chat-sidebar-list">
@@ -206,20 +213,18 @@ export default function ChatInterface() {
 
       {/* ── Main Chat Area ── */}
       <div className="chat-container">
-        {/* Top Control Bar */}
-        <div className="chat-top-bar">
-          <button
-            className="sidebar-toggle-btn"
-            onClick={() => setSidebarOpen((o) => !o)}
-            title="Toggle search history sidebar"
-          >
-            <span>📜</span>
-            <span>{sidebarOpen ? 'Hide History' : `History (${conversations.length})`}</span>
-          </button>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            🔒 Strict Internal KB • Internet Search Disabled
+        {!sidebarOpen && (
+          <div className="chat-top-bar">
+            <button
+              className="sidebar-toggle-btn"
+              onClick={() => setSidebarOpen(true)}
+              title="Open search history sidebar"
+            >
+              <span>📜</span>
+              <span>History ({conversations.length})</span>
+            </button>
           </div>
-        </div>
+        )}
 
         <div className="chat-messages">
           {loadingConv ? (
@@ -233,7 +238,7 @@ export default function ChatInterface() {
               <div className="chat-empty-icon">🎓</div>
               <h2>Welcome to EduAssist</h2>
               <p>
-                I&apos;m your internal AI knowledge assistant. Ask me anything about Edutech Global,
+                I&apos;m your internal AI knowledge assistant. Ask me anything about
                 our products, policies, or processes — I&apos;ll find the answer exclusively from our
                 official documents.
               </p>
@@ -277,7 +282,7 @@ export default function ChatInterface() {
           <form className="chat-input-wrapper" onSubmit={onSubmit}>
             <textarea
               className="chat-input"
-              placeholder="Ask EduAssist anything about Edutech Global..."
+              placeholder="Ask EduAssist anything..."
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyDown={handleKeyDown}
