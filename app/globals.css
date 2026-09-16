@@ -342,7 +342,15 @@ a:hover { color: var(--secondary); }
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
+  gap: 8px;
   flex-shrink: 0;
+}
+
+.sidebar-footer-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
 }
 
 .sidebar-footer-logo-wrap {
@@ -1128,9 +1136,17 @@ a:hover { color: var(--secondary); }
   display: flex;
   align-items: center;
   justify-content: flex-end;
+  gap: 8px;
   margin-top: 24px;
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.auth-footer-brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.3px;
 }
 
 .auth-tagline {

@@ -214,6 +214,7 @@ export default function ChatInterface() {
           <div className="sidebar-footer-logo-wrap">
             <img src="/edutech-logo-white.png" alt="logo" className="sidebar-footer-logo" />
           </div>
+          <span className="sidebar-footer-name">EduTech Global</span>
         </div>
       </aside>
 

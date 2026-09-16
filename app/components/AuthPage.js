@@ -234,6 +234,7 @@ export default function AuthPage() {
           <div className="auth-logo-wrap">
             <img src="/edutech-logo-white.png" alt="logo" className="auth-logo" />
           </div>
+          <span className="auth-footer-brand">EduTech Global</span>
         </div>
       </div>
     </div>
