@@ -106,12 +106,7 @@ export default function AuthPage() {
     <div className="auth-overlay">
       <div className="auth-card">
         <div className="auth-brand">
-          <div className="auth-logo-row">
-            <div className="auth-logo-wrap">
-              <img src="/edutech-logo-white.png" alt="logo" className="auth-logo" />
-            </div>
-            <span className="auth-brand-title">EduAssist</span>
-          </div>
+          <div className="auth-brand-title">EduAssist</div>
           <p className="auth-tagline">Internal Knowledge Assistant</p>
         </div>
 
@@ -230,6 +225,11 @@ export default function AuthPage() {
             </p>
           </form>
         )}
+        {/* ── Bottom-right branding ── */}
+        <div className="auth-card-footer">
+          <img src="/edutech-logo-white.png" alt="EduTech Global" className="auth-footer-logo" />
+          <span className="auth-footer-brand">EduTech Global</span>
+        </div>
       </div>
     </div>
   );

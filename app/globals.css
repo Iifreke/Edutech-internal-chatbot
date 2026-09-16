@@ -1092,35 +1092,45 @@ a:hover { color: var(--secondary); }
   margin-bottom: 32px;
 }
 
-.auth-logo-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.auth-logo-wrap {
-  width: 44px;
-  height: 44px;
-  overflow: hidden;
-  flex-shrink: 0;
-}
-
 .auth-logo {
   height: 44px;
   width: auto;
-  max-width: none;
-  display: block;
+  object-fit: contain;
+  margin-bottom: 10px;
 }
 
 .auth-brand-title {
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
+  margin-bottom: 8px;
   background: linear-gradient(135deg, var(--text-primary), var(--primary));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.auth-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.auth-footer-logo {
+  height: 24px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.7;
+}
+
+.auth-footer-brand {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
 }
 
 .auth-tagline {
