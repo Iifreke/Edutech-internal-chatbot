@@ -11,7 +11,9 @@ export default function Header() {
   return (
     <header className="header">
       <Link href="/" className="header-brand">
-        <img src="/edutech-logo-white.png" alt="logo" className="header-logo-img" />
+        <div className="header-logo-wrap">
+          <img src="/edutech-logo-white.png" alt="logo" className="header-logo-img" />
+        </div>
         <div>
           <div className="header-title">EduAssist</div>
           <div className="header-subtitle">Internal Knowledge Assistant</div>

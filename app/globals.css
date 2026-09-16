@@ -106,10 +106,17 @@ a:hover { color: var(--secondary); }
   gap: 12px;
 }
 
+.header-logo-wrap {
+  width: 36px;
+  height: 36px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .header-logo-img {
   height: 36px;
   width: auto;
-  object-fit: contain;
+  max-width: none;
   display: block;
 }
 
