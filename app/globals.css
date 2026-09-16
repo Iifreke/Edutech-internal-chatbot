@@ -1092,11 +1092,35 @@ a:hover { color: var(--secondary); }
   margin-bottom: 32px;
 }
 
+.auth-logo-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.auth-logo-wrap {
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
 .auth-logo {
   height: 44px;
   width: auto;
-  object-fit: contain;
-  margin-bottom: 10px;
+  max-width: none;
+  display: block;
+}
+
+.auth-brand-title {
+  font-size: 26px;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--text-primary), var(--primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .auth-tagline {

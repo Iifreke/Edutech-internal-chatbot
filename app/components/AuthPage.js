@@ -106,7 +106,12 @@ export default function AuthPage() {
     <div className="auth-overlay">
       <div className="auth-card">
         <div className="auth-brand">
-          <img src="/edutech-logo-white.png" alt="EduTech Global" className="auth-logo" />
+          <div className="auth-logo-row">
+            <div className="auth-logo-wrap">
+              <img src="/edutech-logo-white.png" alt="logo" className="auth-logo" />
+            </div>
+            <span className="auth-brand-title">EduAssist</span>
+          </div>
           <p className="auth-tagline">Internal Knowledge Assistant</p>
         </div>
 
