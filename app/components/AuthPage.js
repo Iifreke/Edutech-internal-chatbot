@@ -5,16 +5,17 @@ import { useAuth } from '../context/AuthContext';
 import { isAllowedEmail, ALLOWED_DOMAINS } from '../../lib/supabase-client';
 
 const DEPARTMENTS = [
-  'Technology',
-  'Product',
-  'Sales & Marketing',
-  'Operations',
+  'Growth and Strategy',
+  'Operations, Telemarketing',
+  'Marketing & Communications',
+  'Product Management',
+  'Engineering',
+  'Operations, Customer Support',
+  'Operations, Technical Support',
+  'Operations, Customer Success',
+  'People Operations',
   'Finance',
-  'Human Resources',
-  'Academic / Curriculum',
-  'Customer Success',
-  'Leadership',
-  'Other',
+  'Management',
 ];
 
 function EyeIcon({ open }) {
